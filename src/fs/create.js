@@ -1,18 +1,15 @@
-import fs from 'fs';
 import * as path from "path";
-import {getFileData} from "../utils.js";
+import {getFileData, getPathInfo} from "../utils.js";
+import fsp from 'node:fs/promises';
 
-const {__dirname} = getFileData(import.meta.url);
-
-const create = async (pathToFile) => {
-  try{
-    if(fs.existsSync(pathToFile)){
-      throw new Error('FS operation failed')
-    }
-    fs.appendFileSync(pathToFile, 'I am fresh and young')
-  } catch(err) {
+const create = async () => {
+  const {__dirname} = getFileData(import.meta.url);
+  const pathToFile = path.resolve(__dirname, './files/fresh.txt')
+  const {isFileExist} = await getPathInfo(pathToFile)
+  if (isFileExist) {
     throw new Error('FS operation failed')
   }
+  await fsp.appendFile(pathToFile, 'I am fresh and young')
 };
 
-await create(path.resolve(__dirname, './files/fresh.txt'));
+await create();

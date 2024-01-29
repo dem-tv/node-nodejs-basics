@@ -1,24 +1,17 @@
-import fs from 'fs';
 import * as path from "path";
-import {getFileData} from "../utils.js";
+import {getFileData, getPathInfo} from "../utils.js";
+import fsp from 'node:fs/promises';
 
-const {__dirname} = getFileData(import.meta.url);
-
-const copy = async (filesDirPath, filesCopyDirPath) => {
-  try{
-    if(!fs.existsSync(filesDirPath)){
-      throw new Error('FS operation failed')
-    }
-    fs.mkdirSync(filesCopyDirPath)
-    const files = fs.readdirSync(filesDirPath)
-    files.forEach(file => {
-      const copyResultPath = path.resolve(filesCopyDirPath, file)
-      const filePath = path.resolve(filesDirPath, file)
-      fs.copyFileSync(filePath, copyResultPath)
-    })
-  } catch(err){
+const copy = async () => {
+  const {__dirname} = getFileData(import.meta.url);
+  const filesDirPath = path.resolve(__dirname, './files')
+  const filesCopyDirPath = path.resolve(__dirname, './files_copy')
+  const {isFileExist: isFilesDirExist} = await getPathInfo(filesDirPath)
+  const {isFileExist: isFilesCopyDirExist} = await getPathInfo(filesCopyDirPath)
+  if (!isFilesDirExist || isFilesCopyDirExist) {
     throw new Error('FS operation failed')
   }
+  await fsp.cp(filesDirPath, filesCopyDirPath, {recursive: true})
 };
 
-await copy(path.resolve(__dirname, './files'), path.resolve(__dirname, './files_copy'));
+await copy();

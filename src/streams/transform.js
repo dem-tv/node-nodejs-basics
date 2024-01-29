@@ -1,7 +1,7 @@
 import * as stream from "stream";
 
 const transform = async () => {
-  try{
+  try {
     const t = new stream.Transform({
       transform(chunk, controller, cb) {
         const transformed = chunk.toString().split('').reverse().join('').replace('\n', '')
@@ -10,7 +10,7 @@ const transform = async () => {
       },
     });
     process.stdin.pipe(t).pipe(process.stdout)
-  } catch(err){
+  } catch (err) {
     console.log(err)
   }
 };

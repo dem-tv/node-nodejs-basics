@@ -1,17 +1,17 @@
 import path from "path";
-import {getFileData} from "../utils.js";
-import fs from "fs";
+import {getFileData, getPathInfo} from "../utils.js";
+import fsp from "node:fs/promises";
 
-const {__dirname} = getFileData(import.meta.url);
-
-const rename = async (folderPath, oldName, newName) => {
-  try{
-  const oldFullPath = path.resolve(folderPath, oldName)
-  const newFullPath = path.resolve(folderPath, newName)
-    fs.renameSync(oldFullPath, newFullPath)
-  } catch(err){
+const rename = async () => {
+  const {__dirname} = getFileData(import.meta.url);
+  const oldFullPath = path.resolve(__dirname, 'files/wrongFilename.txt')
+  const newFullPath = path.resolve(__dirname, 'files/properFilename.md')
+  const {isFileExist: isOldFileExist} = await getPathInfo(oldFullPath)
+  const {isFileExist: isNewFileExist} = await getPathInfo(newFullPath)
+  if (!isOldFileExist || isNewFileExist) {
     throw new Error('FS operation failed')
   }
+  await fsp.rename(oldFullPath, newFullPath)
 };
 
-await rename(path.resolve(__dirname, 'files'), 'wrongFilename.txt', 'properFilename.md');
+await rename();

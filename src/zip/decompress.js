@@ -3,10 +3,11 @@ import fs from "fs";
 import path from "path";
 import {getFileData} from "../utils.js";
 
-const {__dirname} = getFileData(import.meta.url);
-
-const decompress = async (pathToUncompress, pathToOutput) => {
+const decompress = async () => {
   try {
+    const {__dirname} = getFileData(import.meta.url);
+    const pathToUncompress = path.resolve(__dirname, './files/archive.gz');
+    const pathToOutput = path.resolve(__dirname, './files/fileToCompress.txt')
     const decomposeStream = zlib.createBrotliDecompress()
     const readableStream = fs.createReadStream(pathToUncompress)
     const writableStream = fs.createWriteStream(pathToOutput)
@@ -16,4 +17,4 @@ const decompress = async (pathToUncompress, pathToOutput) => {
   }
 };
 
-await decompress(path.resolve(__dirname, './files/archive.gz'), path.resolve(__dirname, './files/fileToCompress.txt'));
+await decompress();

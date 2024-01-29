@@ -1,4 +1,4 @@
-import { spawn, spawnSync } from 'child_process';
+import {spawn} from 'child_process';
 import {getFileData} from "../utils.js";
 
 const spawnChildProcess = async (args = []) => {

@@ -3,17 +3,18 @@ import {getFileData} from "../utils.js";
 import * as zlib from "zlib";
 import fs from "fs";
 
-const {__dirname} = getFileData(import.meta.url);
-
-const compress = async (pathToInput, pathToOutput) => {
+const compress = async () => {
   try {
+    const {__dirname} = getFileData(import.meta.url);
+    const pathToInput = path.resolve(__dirname, './files/fileToCompress.txt')
+    const pathToOutput = path.resolve(__dirname, './files/archive.gz')
     const compressStream = zlib.createBrotliCompress();
     const readableStream = fs.createReadStream(pathToInput)
     const writableStream = fs.createWriteStream(pathToOutput)
     readableStream.pipe(compressStream).pipe(writableStream)
-  } catch(err){
+  } catch (err) {
     console.log(err)
   }
 };
 
-await compress(path.resolve(__dirname, './files/fileToCompress.txt'), path.resolve(__dirname, './files/archive.gz'));
+await compress();
